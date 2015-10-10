@@ -200,7 +200,7 @@ class PhotoCtrl(wx.App):
 				self.leftBtn.Disable()
 				self.rightBtn.Disable()
 				self.currentBattle = None
-				self.text.SetLabelText("\n".join(self.winners))
+				self.text.SetLabelText("Sorted picture (best to worst):\n\n" + "\n".join(self.winners))
 				self.frameResult.Show()
 
 			else:

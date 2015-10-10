@@ -1,4 +1,5 @@
 ﻿def GenerateBattles(listOfContestants):
+	"""Main function for the module: generate the Battle Tree structure from a list of Contestant"""
 	battleList = []
 	for c in listOfContestants:
 		battleList.append(Battle(c))
@@ -27,7 +28,7 @@ def generateBattlesImpl(listOfBattles):
 		
 
 class Contestant:
-	"""All data about an Image. TODO: Get out of Battle"""
+	"""All data about an Image. TODO: Get out of Battle module, should be user-defined"""
 
 	def __init__(self, myId, image=None, fullImage=None):
 		self.im = image
@@ -35,7 +36,7 @@ class Contestant:
 		self.fullImage = fullImage
 
 class Battle:
-		"""A node of a graph representing a battle between multiple contestants. Cans also be a leaf with only on conestant.
+		"""A node of a tree representing a battle between multiple contestants. Cans also be a leaf with only on conestant.
 		See the unit test's function startBattle for proper usage"""
 		
 		def __init__(self, a, b=None):
