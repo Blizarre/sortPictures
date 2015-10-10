@@ -4,24 +4,24 @@
 		battleList.append(Battle(c))
 	return generateBattlesImpl(battleList)
 
-def generateBattlesImpl(listOfContestants):
+def generateBattlesImpl(listOfBattles):
 	"""Recursive function : will generate pair of the elements given
 	in parameters, creating a pyramid. Return the top element at the end"""
 	
-	if len(listOfContestants) == 1:
-		return Battle(listOfContestants[0], None)
-	elif len(listOfContestants) == 2:
-		return Battle(listOfContestants[0], listOfContestants[1])
+	if len(listOfBattles) == 1:
+		return listOfBattles[0]
+	elif len(listOfBattles) == 2:
+		return Battle(listOfBattles[0], listOfBattles[1])
 	else:
 		battleList = []
-		max_battle = len(listOfContestants) / 2
+		max_battle = len(listOfBattles) / 2
 	
 		for i in range(max_battle):
-			battleList.append(Battle(listOfContestants[i], listOfContestants[i + 1]))
+			battleList.append(Battle(listOfBattles[2*i], listOfBattles[2*i + 1]))
 
 		# Last element will be a leaf
-		if len(listOfContestants) % 2 == 1:
-			battleList.append(listOfContestants[-1])
+		if len(listOfBattles) % 2 == 1:
+			battleList.append(listOfBattles[-1])
 	
 		return generateBattlesImpl(battleList)
 		
@@ -53,10 +53,6 @@ class Battle:
 
 		def IsLeaf(self):
 			return self.b == None
-
-		def __str__(self):
-			return "%s - Decided: %s, Leaf %s" % (self.id, str(self.IsLeaf()), set(self.IsDecided()))
-		
 		
 		def GetNextUndecided(self):
 			if self.IsDecided():

@@ -1,5 +1,39 @@
 ﻿import unittest
 import Battle
+import random
+
+
+def startBattle(contestants):
+	""" This is a typical workflow for thz Battle class: 
+	1. Generate a Battle using a list of contestants
+	2. As long as the Current battle is not a Single contestant (a Leaf in the graph) :
+	  a. check if there is any undecided battle between contestant before we can select a winner
+	  b. if there is one, fetch is and choose the winner
+	  c. If the current battle is decided (ie a winner has been elected), fetch the winner and create a new graph battle without him.
+	     This become the new current battle
+	"""
+	listOfResults = []
+
+	battle = Battle.GenerateBattles(contestants)
+
+	while not battle.IsLeaf():
+		undec = battle.GetNextUndecided()
+		if(undec != None):
+			a = undec.a.getWinner()
+			b = undec.b.getWinner()
+			# decide which contestant is stronger depending on its number
+			if int(a.id) < int(b.id):
+				undec.WinnerIsA()
+			else:
+				undec.WinnerIsB()
+		if battle.IsDecided():
+			listOfResults.append(battle.getWinner())
+			battle = battle.RemoveWinner()
+		
+	# append the last element, when b is leaf
+	listOfResults.append(battle.getWinner())
+	return listOfResults
+
 
 class TestBattle(unittest.TestCase):
 
@@ -86,6 +120,65 @@ class TestBattle(unittest.TestCase):
 
 		self.assertTrue(main.IsDecided())
 		self.assertEqual(main.getWinner(), c3)
+
+	def test_Workflow_limit(self):
+		"""Check the workflow, from Battle creation to the end, for limit case"""
+		# Only one contestant
+		listOfContestants1 = [ Battle.Contestant(str(i)) for i in range(1) ]
+		listOfResults1 = startBattle(listOfContestants1)
+
+		self.assertListEqual(listOfContestants1, listOfResults1)
+
+		# Only two contestants
+		listOfContestants2 = [ Battle.Contestant(str(i)) for i in range(2) ]
+		listOfResults2 = startBattle(listOfContestants2)
+
+		self.assertListEqual(listOfContestants2, listOfResults2)
+
+		# lots of contestants
+		listOfContestants200 = [ Battle.Contestant(str(i)) for i in range(200) ]
+		listOfResults200 = startBattle(listOfContestants200)
+
+		self.assertListEqual(listOfContestants200, listOfResults200)
+
+	def test_Workflow_ordered(self):
+		"""Check the workflow, from Battle creation to the end, for ordered data"""
+		# The list is ordered, odd number
+		listOfContestantsO = [ Battle.Contestant(str(i)) for i in range(13) ]
+		listOfResultsO = startBattle(listOfContestantsO)
+
+		self.assertListEqual(listOfContestantsO, listOfResultsO)
+
+		# The list is ordered, even number
+		listOfContestantsE = [ Battle.Contestant(str(i)) for i in range(12) ]
+		listOfResultsE = startBattle(listOfContestantsE)
+
+		self.assertListEqual(listOfContestantsE, listOfResultsE)
+
+	def test_Workflow_unordered(self):
+		"""Check the workflow, from Battle creation to the end, for unordered data"""
+		# The list is ordered, odd number
+		listOfContestantsO = [ Battle.Contestant(str(i)) for i in range(15) ]
+		
+		# copy the list and shuffle it
+		shuffledlistOfContestantsO = listOfContestantsO[:]
+		random.shuffle(shuffledlistOfContestantsO)
+
+		listOfResultsO = startBattle(shuffledlistOfContestantsO)
+
+		self.assertListEqual(listOfContestantsO, listOfResultsO)
+
+		# The list is ordered, even number
+		listOfContestantsE = [ Battle.Contestant(str(i)) for i in range(15) ]
+		
+		# copy the list and shuffle it
+		shuffledlistOfContestantsE = listOfContestantsE[:]
+		random.shuffle(shuffledlistOfContestantsE)
+
+		listOfResultsE = startBattle(shuffledlistOfContestantsE)
+
+		self.assertListEqual(listOfContestantsE, listOfResultsE)
+
 
 
 if __name__ == '__main__':
