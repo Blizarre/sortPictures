@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{b527c1d8-cb14-49e8-b6de-0aa2e9766e91}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>testBattle.py</StartupFile>
+    <StartupFile>showMe.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>

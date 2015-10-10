@@ -35,7 +35,8 @@ class Contestant:
 		self.fullImage = fullImage
 
 class Battle:
-		"""A battle or a leaf"""
+		"""A node of a graph representing a battle between multiple contestants. Cans also be a leaf with only on conestant.
+		See the unit test's function startBattle for proper usage"""
 		
 		def __init__(self, a, b=None):
 			"""A Battle between 2 contestants"""

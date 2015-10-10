@@ -54,7 +54,9 @@ def getPeekImage(im, pos):
 class PhotoCtrl(wx.App):
 	currentBest = None
 	currentBattle = None
-	
+	# List of elements ordered from the best to the worst
+	winners = []
+
 	# Rectangle describing where the image 1 is located in the panel. Is a rectangle (x, y, width, height)
 	posIm1 = wx.Rect(0,0, 1, 1)
 
@@ -64,14 +66,32 @@ class PhotoCtrl(wx.App):
 	def __init__(self, redirect=False, filename=None):
 		wx.App.__init__(self, redirect, filename)
 		self.frame = wx.Frame(None, title='Photo Control')
-		self.frameZoom = wx.Frame(None, title='Zoom', size=PEEK_SIZE)
+		self.framePeek = wx.Frame(None, title='Peek', size=PEEK_SIZE)
+		self.frameResult = wx.Frame(None, title='Result')
 
 		self.panel = wx.Panel(self.frame)
-		self.panelPeek = wx.Panel(self.frameZoom)
-		self.createWidgets()
+		self.panelPeek = wx.Panel(self.framePeek)
+		self.panelResult = wx.Panel(self.frameResult)
+
+		self.createWidgetsMainFrame()
+		self.createWidgetsPeekFrame()
+		self.createWidgetsResultFrame()
 		self.frame.Show()
 
-	def createWidgets(self):
+	def createWidgetsResultFrame(self):
+		self.text = wx.TextCtrl(self.panelResult, value="hello\nworld", size=(800,600), style = wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_AUTO_URL|wx.TE_RICH)
+		self.sizer = wx.BoxSizer(wx.HORIZONTAL)
+		self.sizer.Add(self.text)
+		self.sizer.Fit(self.frameResult)
+
+	def createWidgetsPeekFrame(self):
+		self.imgPeek = wx.EmptyImage(PEEK_SIZE.width, PEEK_SIZE.height)
+		self.imagePeekCtrl = wx.StaticBitmap(self.panelPeek, wx.ID_ANY, 
+			wx.BitmapFromImage(self.imgPeek))
+		
+		self.panelPeek.Layout()
+
+	def createWidgetsMainFrame(self):
 		self.img = wx.EmptyImage(PREVIEW_SIZE[0] * 2,PREVIEW_SIZE[1])
 		self.imageCtrl = wx.StaticBitmap(self.panel, wx.ID_ANY, 
 										 wx.BitmapFromImage(self.img))
@@ -80,6 +100,8 @@ class PhotoCtrl(wx.App):
 		self.leftBtn = wx.Button(self.panel, label='Left')
 		self.rightBtn = wx.Button(self.panel, label='Right')
 		
+		self.label = wx.StaticText(self.panel, label='Select image directory', style=wx.ALIGN_CENTER_VERTICAL)
+
 		self.leftBtn.Disable()
 		self.rightBtn.Disable()
 		
@@ -96,18 +118,16 @@ class PhotoCtrl(wx.App):
 		self.sizer.Add(dirBtn, 0, wx.ALL, 5)         
 		self.sizer.Add(self.leftBtn, 0, wx.ALL, 5)         
 		self.sizer.Add(self.rightBtn, 0, wx.ALL, 5)          
+		self.sizer.Add(self.label, 0, wx.ALIGN_CENTER_VERTICAL)          
 		self.mainSizer.Add(self.sizer, 0, wx.ALL, 5)
 
 		self.panel.SetSizer(self.mainSizer)
 		self.mainSizer.Fit(self.frame)
 
 		self.panel.Layout()
-		
-		self.imgPeek = wx.EmptyImage(PEEK_SIZE.width, PEEK_SIZE.height)
-		self.imagePeekCtrl = wx.StaticBitmap(self.panelPeek, wx.ID_ANY, 
-			wx.BitmapFromImage(self.imgPeek))
 
-		self.panelPeek.Layout()
+	def setLabel(self, str):
+		self.label.SetLabelText(str)
 
 	def onBrowse(self, event):
 		""" Show the browsing dialog to the user and load data from the directory"""
@@ -155,7 +175,7 @@ class PhotoCtrl(wx.App):
 			fullIm = im.copy()
 			im.thumbnail(PREVIEW_SIZE, Image.ANTIALIAS)
 			contestants.append(Battle.Contestant(file_name, im, fullIm))
-		print "Number of images loaded:", len(contestants)
+		self.setLabel("Number of images loaded: %d"%( len(contestants), ))
 		self.currentBest = Battle.GenerateBattles(contestants)
 		self.currentBattle = self.currentBest.GetNextUndecided()
 
@@ -173,13 +193,16 @@ class PhotoCtrl(wx.App):
 			
 		if self.currentBattle == None:
 			while(self.currentBest != None and self.currentBest.IsDecided()):
-				print "Next winner is", self.currentBest.getWinner().id
+				self.winners.append(self.currentBest.getWinner().id)
 				self.currentBest = self.currentBest.RemoveWinner()
 			
 			if self.currentBest == None:
 				self.leftBtn.Disable()
 				self.rightBtn.Disable()
 				self.currentBattle = None
+				self.text.SetLabelText("\n".join(self.winners))
+				self.frameResult.Show()
+
 			else:
 				self.currentBattle = self.currentBest.GetNextUndecided()
 	
@@ -209,7 +232,7 @@ class PhotoCtrl(wx.App):
 			self.panel.Refresh()
 			
 			# Show the zoom frame
-			self.frameZoom.Show()
+			self.framePeek.Show()
 
 if __name__ == '__main__':
 	app = PhotoCtrl()
