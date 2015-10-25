@@ -112,8 +112,6 @@ class PhotoCtrl(wx.App):
 		self.mainSizer = wx.BoxSizer(wx.VERTICAL)
 		self.sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-		self.mainSizer.Add(wx.StaticLine(self.panel, wx.ID_ANY),
-						   0, wx.ALL | wx.EXPAND, 5)
 		self.mainSizer.Add(self.imageCtrl, 0, wx.ALL, 5)
 		self.sizer.Add(dirBtn, 0, wx.ALL, 5)         
 		self.sizer.Add(self.leftBtn, 0, wx.ALL, 5)         

@@ -4,11 +4,11 @@ import random
 
 
 def startBattle(contestants):
-	""" This is a typical workflow for thz Battle class: 
+	""" This is a typical workflow for the Battle class: 
 	1. Generate a Battle using a list of contestants
 	2. As long as the Current battle is not a Single contestant (a Leaf in the graph) :
-	  a. check if there is any undecided battle between contestant before we can select a winner
-	  b. if there is one, fetch is and choose the winner
+	  a. check if there is any undecided battle between contestant before we can select a winner for the current battle
+	  b. if there is one, fetch it and elect the winner for the battle using WinnerIsA() or WinnerIsB()
 	  c. If the current battle is decided (ie a winner has been elected), fetch the winner and create a new graph battle without him.
 	     This become the new current battle
 	"""
@@ -169,7 +169,7 @@ class TestBattle(unittest.TestCase):
 		self.assertListEqual(listOfContestantsO, listOfResultsO)
 
 		# The list is ordered, even number
-		listOfContestantsE = [ Battle.Contestant(str(i)) for i in range(15) ]
+		listOfContestantsE = [ Battle.Contestant(str(i)) for i in range(14) ]
 		
 		# copy the list and shuffle it
 		shuffledlistOfContestantsE = listOfContestantsE[:]
